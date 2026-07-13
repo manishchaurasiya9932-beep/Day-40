@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Career Compass — Find your Tech Path</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-950:#0B0F1E;
+    --navy-900:#111730;
+    --gold-400:#F0B84E;
+    --gold-500:#E8A33D;
+    --gold-600:#C9832A;
+    --teal-400:#5FC8B8;
+    --teal-500:#3E9C8A;
+    --ink-0:#FDFCF9;
+    --ink-1:#D9DCEC;
+    --ink-2:#9AA1C4;
+    --ink-3:#6B7299;
+    --danger:#E56B6F;
+    --radius-sm:8px;
+    --radius-md:14px;
+    --radius-lg:22px;
+    --font-display:'Fraunces', serif;
+    --font-body:'Manrope', sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:radial-gradient(ellipse at top, #16204A 0%, var(--navy-950) 55%, #070A16 100%);
+    color:var(--ink-0);
+    font-family:var(--font-body);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  body::before{
+    content:'';
+    position:fixed; inset:0;
+    background-image:
+      radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,.5), transparent),
+      radial-gradient(1px 1px at 80% 10%, rgba(255,255,255,.4), transparent),
+      radial-gradient(1.5px 1.5px at 60% 70%, rgba(255,255,255,.35), transparent),
+      radial-gradient(1px 1px at 30% 80%, rgba(255,255,255,.4), transparent),
+      radial-gradient(1px 1px at 90% 60%, rgba(255,255,255,.3), transparent),
+      radial-gradient(1.5px 1.5px at 45% 35%, rgba(255,255,255,.3), transparent);
+    background-size:100% 100%;
+    pointer-events:none;
+    opacity:.6;
+    z-index:0;
+  }
+  .wrap{position:relative; z-index:1; max-width:900px; margin:0 auto; padding:48px 24px 80px;}
+
+  header.hero{text-align:center; margin-bottom:40px;}
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--gold-400); font-weight:600; margin-bottom:18px;
+  }
+  .eyebrow::before, .eyebrow::after{content:'✦'; font-size:10px; opacity:.7;}
+  h1{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:clamp(32px, 5vw, 52px);
+    line-height:1.08;
+    margin:0 0 14px;
+    background:linear-gradient(180deg, #FFFDF8 10%, var(--ink-1) 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .sub{color:var(--ink-2); font-size:16px; max-width:520px; margin:0 auto; line-height:1.6;}
+
+  .card{
+    background:linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.015));
+    border:1px solid rgba(255,255,255,.09);
+    border-radius:var(--radius-lg);
+    padding:28px;
+    backdrop-filter:blur(6px);
+    margin-bottom:24px;
+  }
+
+  .step-track{display:flex; justify-content:center; gap:8px; margin-bottom:28px;}
+  .step-dot{width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.14); transition:.3s;}
+  .step-dot.active{background:var(--gold-500); width:22px; border-radius:4px;}
+  .step-dot.done{background:var(--teal-500);}
+
+  .q-label{font-size:13px; color:var(--ink-2); text-transform:uppercase; letter-spacing:.08em; margin-bottom:12px; font-weight:600;}
+  .q-title{font-family:var(--font-display); font-size:24px; font-weight:500; margin:0 0 22px; color:var(--ink-0);}
+
+  .option-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .opt{
+    background:rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:var(--radius-md);
+    padding:16px 18px;
+    cursor:pointer;
+    font-family:var(--font-body);
+    color:var(--ink-1);
+    font-size:15px;
+    text-align:left;
+    transition:.2s;
+  }
+  .opt:hover{border-color:var(--gold-500); background:rgba(232,163,61,.07); transform:translateY(-1px);}
+  .opt.selected{border-color:var(--gold-500); background:rgba(232,163,61,.14); color:#FFF6E4;}
+  .opt small{display:block; color:var(--ink-3); font-size:12px; margin-top:4px; font-weight:400;}
+
+  textarea, input[type=text]{
+    width:100%; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.12);
+    border-radius:var(--radius-md); color:var(--ink-0); font-family:var(--font-body);
+    font-size:15px; padding:14px 16px; resize:vertical; outline:none; transition:.2s;
+  }
+  textarea:focus, input[type=text]:focus{border-color:var(--gold-500); background:rgba(255,255,255,.06);}
+  textarea::placeholder, input::placeholder{color:var(--ink-3);}
+
+  .row-actions{display:flex; justify-content:space-between; align-items:center; margin-top:26px;}
+  button.btn{
+    font-family:var(--font-body); font-weight:600; font-size:14px;
+    padding:12px 24px; border-radius:999px; border:none; cursor:pointer; transition:.2s;
+  }
+  .btn-primary{background:linear-gradient(180deg, var(--gold-400), var(--gold-600)); color:#241605;}
+  .btn-primary:hover{filter:brightness(1.08); transform:translateY(-1px);}
+  .btn-primary:disabled{opacity:.35; cursor:not-allowed; transform:none;}
+  .btn-ghost{background:transparent; color:var(--ink-2); border:1px solid rgba(255,255,255,.12);}
+  .btn-ghost:hover{color:var(--ink-0); border-color:rgba(255,255,255,.3);}
+
+  .roadmap-header{text-align:center; margin-bottom:36px;}
+  .roadmap-header h2{font-family:var(--font-display); font-size:30px; font-weight:600; margin:0 0 8px;}
+  .roadmap-header p{color:var(--ink-2); font-size:15px; max-width:560px; margin:0 auto;}
+
+  .path{position:relative; padding-left:36px; margin:36px 0;}
+  .path::before{
+    content:''; position:absolute; left:11px; top:6px; bottom:6px; width:2px;
+    background:linear-gradient(180deg, var(--gold-500), var(--teal-500) 60%, rgba(255,255,255,.1));
+  }
+  .milestone{position:relative; margin-bottom:26px;}
+  .milestone::before{
+    content:''; position:absolute; left:-36px; top:4px; width:14px; height:14px; border-radius:50%;
+    background:var(--navy-950); border:2px solid var(--gold-500); box-shadow:0 0 0 4px rgba(232,163,61,.15);
+  }
+  .milestone.alt::before{border-color:var(--teal-400); box-shadow:0 0 0 4px rgba(95,200,184,.15);}
+  .milestone-card{
+    background:rgba(255,255,255,.035); border:1px solid rgba(255,255,255,.09);
+    border-radius:var(--radius-md); padding:18px 20px;
+  }
+  .milestone-stage{font-size:11px; text-transform:uppercase; letter-spacing:.1em; color:var(--gold-400); font-weight:700; margin-bottom:6px;}
+  .milestone-title{font-family:var(--font-display); font-size:19px; font-weight:500; margin:0 0 8px; color:var(--ink-0);}
+  .milestone-desc{color:var(--ink-1); font-size:14px; line-height:1.65; margin:0 0 10px; white-space:pre-line;}
+  .chip-row{display:flex; flex-wrap:wrap; gap:8px;}
+  .chip{
+    font-size:12px; padding:5px 12px; border-radius:999px; background:rgba(95,200,184,.12);
+    color:var(--teal-400); border:1px solid rgba(95,200,184,.25);
+  }
+
+  .section-block{margin-top:30px;}
+  .section-block h3{font-family:var(--font-display); font-size:18px; font-weight:500; margin:0 0 12px; color:var(--gold-400);}
+  .section-block ul{margin:0; padding-left:20px; color:var(--ink-1); font-size:14px; line-height:1.8;}
+
+  @media(max-width:520px){ .option-grid{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow">Career Compass</div>
+    <h1>Find your tech path</h1>
+    <p class="sub">Answer a few quick questions and get a personalized, stage-by-stage roadmap into tech — no login, no server, works fully offline.</p>
+  </header>
+  <div id="app"></div>
+</div>
+
+<script>
+// ---------- Question flow ----------
+const QUESTIONS = [
+  {
+    key: 'interest',
+    label: 'Step 1 of 4',
+    title: 'What draws you to tech the most?',
+    options: [
+      { val:'dev', label:'Coding / Software Dev', hint:'Building apps, websites, systems' },
+      { val:'data', label:'Data / AI-ML', hint:'Models, data, analytics' },
+      { val:'design', label:'Design / Product', hint:'UX, UI, product thinking' },
+      { val:'unsure', label:"I'm not sure yet", hint:'Still exploring options' },
+    ]
+  },
+  {
+    key: 'level',
+    label: 'Step 2 of 4',
+    title: 'What is your current skill level?',
+    options: [
+      { val:'beginner', label:'Complete beginner', hint:'Never coded before' },
+      { val:'basic', label:'Know the basics', hint:'Some syntax, small scripts' },
+      { val:'intermediate', label:'Fairly comfortable', hint:'Built a few projects' },
+      { val:'working', label:'Already working / studying it', hint:'In college or a job related to this' },
+    ]
+  },
+  {
+    key: 'stream',
+    label: 'Step 3 of 4',
+    title: 'Which stage are you at?',
+    options: [
+      { val:'school', label:'School (11th–12th)', hint:'' },
+      { val:'college', label:'College (Engineering/BSc etc.)', hint:'' },
+      { val:'graduate', label:'Graduate, job hunting', hint:'' },
+      { val:'professional', label:'Working professional', hint:'Switching fields' },
+    ]
+  },
+  {
+    key: 'style',
+    label: 'Step 4 of 4',
+    title: 'What kind of guidance do you want?',
+    options: [
+      { val:'fast', label:'Fastest path to a job', hint:'Skip theory, get skills that hire' },
+      { val:'deep', label:'Deep, strong fundamentals', hint:'Solid CS foundation first' },
+      { val:'balanced', label:'Balanced mix', hint:'A bit of both' },
+      { val:'explore', label:'Help me explore first', hint:'Not fully decided on a track' },
+    ]
+  }
+];
+
+let state = {
+  step: 0,
+  answers: { interest:'', level:'', stream:'', style:'', notes:'' },
+  roadmap: null
+};
+
+const app = document.getElementById('app');
+render();
+
+function render(){
+  if(state.roadmap){ renderRoadmap(); return; }
+  if(state.step < QUESTIONS.length){ renderQuestion(); }
+  else{ renderNotes(); }
+}
+
+function dotsHtml(){
+  const total = QUESTIONS.length + 1;
+  let html = '';
+  for(let i=0;i<total;i++){
+    let cls = 'step-dot';
+    if(i < state.step) cls += ' done';
+    else if(i === state.step) cls += ' active';
+    html += `<div class="${cls}"></div>`;
+  }
+  return html;
+}
+
+function renderQuestion(){
+  const q = QUESTIONS[state.step];
+  const selected = state.answers[q.key];
+  app.innerHTML = `
+    <div class="step-track">${dotsHtml()}</div>
+    <div class="card">
+      <div class="q-label">${q.label}</div>
+      <h2 class="q-title">${q.title}</h2>
+      <div class="option-grid">
+        ${q.options.map(o => `
+          <button class="opt ${selected===o.val?'selected':''}" data-val="${o.val}">
+            ${o.label}${o.hint?`<small>${o.hint}</small>`:''}
+          </button>
+        `).join('')}
+      </div>
+      <div class="row-actions">
+        <button class="btn btn-ghost" id="backBtn" ${state.step===0?'disabled':''}>Back</button>
+        <button class="btn btn-primary" id="nextBtn" ${selected?'':'disabled'}>Next</button>
+      </div>
+    </div>
+  `;
+  app.querySelectorAll('.opt').forEach(btn=>{
+    btn.onclick = () => { state.answers[q.key] = btn.dataset.val; render(); };
+  });
+  document.getElementById('backBtn').onclick = () => { state.step = Math.max(0, state.step-1); render(); };
+  document.getElementById('nextBtn').onclick = () => { if(state.answers[q.key]){ state.step++; render(); } };
+}
+
+function renderNotes(){
+  app.innerHTML = `
+    <div class="step-track">${dotsHtml()}<div class="step-dot active"></div></div>
+    <div class="card">
+      <div class="q-label">Last thing</div>
+      <h2 class="q-title">Anything specific on your mind? <span style="color:var(--ink-3); font-weight:400; font-size:14px;">(optional)</span></h2>
+      <textarea id="notesInput" rows="4" placeholder="e.g. My parents want me to do medicine but I love coding, or I'm scared I'm too behind already...">${state.answers.notes}</textarea>
+      <div class="row-actions">
+        <button class="btn btn-ghost" id="backBtn">Back</button>
+        <button class="btn btn-primary" id="genBtn">Build my roadmap ✦</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('backBtn').onclick = () => { state.step--; render(); };
+  document.getElementById('genBtn').onclick = () => {
+    state.answers.notes = document.getElementById('notesInput').value.trim();
+    state.roadmap = buildRoadmap(state.answers);
+    render();
+  };
+}
+
+// ---------- Roadmap generation logic (fully local, no API/server needed) ----------
+function buildRoadmap(a){
+  const tracks = {
+    dev: {
+      headline: 'Your Path into Software Development',
+      summary: 'A practical route from writing your first line of code to landing a developer role.',
+      stages: [
+        ['Foundations', 'Pick one language — Python or JavaScript. Learn variables, loops, functions, conditionals, and basic OOP. Practice 1–2 hours daily and build small tools like a calculator or to-do list.', ['Python/JS','Basics'], 'gold'],
+        ['Core CS + Git', 'Learn data structures (arrays, linked lists, stacks, queues) and basic algorithms (sorting, searching, recursion). Get comfortable with Git and GitHub — non-negotiable for any dev job.', ['DSA','Git'], 'teal'],
+        ['Build Real Things', 'Go full-stack: HTML/CSS/JS then React on the frontend; Node.js or Django on the backend; MongoDB or PostgreSQL for data. Ship a portfolio site and one complete project.', ['Web Dev','Projects'], 'gold'],
+        ['Sharpen & Showcase', 'Move into medium-difficulty DSA (trees, graphs, DP basics). Polish 2–3 GitHub projects with strong READMEs. Get your resume and LinkedIn fully job-ready.', ['DSA','Portfolio'], 'teal'],
+        ['Get Hired', 'Practice mock interviews and company-tagged DSA problems. Start applying on LinkedIn, Internshala, and through campus placements. Contribute to one open-source repo for extra credibility.', ['Interviews','Applications'], 'gold'],
+      ],
+      resources: ['freeCodeCamp.org','CS50 by Harvard (free)','LeetCode / GeeksforGeeks for practice','YouTube: Apna College, CodeWithHarry, Striver (DSA)'],
+    },
+    data: {
+      headline: 'Your Path into Data & AI/ML',
+      summary: 'From basic statistics to building and deploying real machine learning models.',
+      stages: [
+        ['Foundations', 'Learn Python plus core libraries: NumPy, Pandas. Brush up on statistics and basic linear algebra — this is the bedrock of everything in ML.', ['Python','Stats'], 'gold'],
+        ['Data Skills', 'Practice data cleaning, visualization (Matplotlib/Seaborn), and SQL. Work through real, messy datasets from Kaggle rather than only toy examples.', ['SQL','Kaggle'], 'teal'],
+        ['Machine Learning Core', 'Learn scikit-learn: regression, classification, clustering. Understand model evaluation, overfitting, and cross-validation deeply before moving to deep learning.', ['ML','scikit-learn'], 'gold'],
+        ['Deep Learning + Projects', 'Learn PyTorch or TensorFlow basics. Build 2–3 end-to-end projects (e.g. an image classifier, a recommendation system) and document them well.', ['Deep Learning','Projects'], 'teal'],
+        ['Get Hired', 'Learn to deploy a model (Flask/FastAPI + cloud basics). Practice ML interview questions and case studies. Apply for data/ML internships and entry roles.', ['Deployment','Interviews'], 'gold'],
+      ],
+      resources: ['Kaggle Learn (free micro-courses)','Andrew Ng — Machine Learning Specialization (Coursera)','fast.ai for practical deep learning','StatQuest on YouTube for intuition'],
+    },
+    design: {
+      headline: 'Your Path into Design & Product',
+      summary: 'From design fundamentals to a portfolio that gets you hired as a UX/Product designer.',
+      stages: [
+        ['Foundations', 'Learn design fundamentals: color, typography, layout, hierarchy. Get fluent in Figma — it is the industry standard tool.', ['Figma','Basics'], 'gold'],
+        ['UX Thinking', 'Learn user research basics, wireframing, and usability principles. Study a few real apps and redesign one feature as practice.', ['UX Research','Wireframes'], 'teal'],
+        ['Build a Portfolio', 'Design 2–3 case studies end-to-end: problem, research, iterations, final UI. Depth beats quantity — show your thinking, not just pretty screens.', ['Case Studies','Portfolio'], 'gold'],
+        ['Product Sense', 'Learn basic product thinking: prioritization, metrics, and how design decisions tie to business goals. Read about product-market fit and user funnels.', ['Product Sense'], 'teal'],
+        ['Get Hired', 'Polish your portfolio site, get feedback from designers on communities like ADPList, and apply for internships or junior design roles.', ['Portfolio','Applications'], 'gold'],
+      ],
+      resources: ['Figma official tutorials','Laws of UX (lawsofux.com)','ADPList for free mentorship','Refactoring UI (book) for visual design'],
+    },
+    unsure: {
+      headline: 'Your Path to Finding the Right Tech Track',
+      summary: 'A short exploration phase before committing to one track, so your decision is informed rather than guessed.',
+      stages: [
+        ['Explore Broadly', 'Spend 2–3 weeks trying beginner tastes of coding, data, and design — one free intro tutorial in each. Notice what keeps your attention without forcing it.', ['Exploration'], 'gold'],
+        ['Talk to People', 'Have 3–5 short conversations with people already working in tech roles you are curious about. Ask what a normal week actually looks like, not just the highlights.', ['Conversations'], 'teal'],
+        ['Pick a Direction', 'Choose one track based on what genuinely held your interest, not what sounds most impressive. You can always pivot later — the goal is to start moving.', ['Decision'], 'gold'],
+        ['Commit for 90 Days', 'Once chosen, follow that track\'s dedicated roadmap (Dev / Data / Design) for at least 90 days before reconsidering, to give it a fair shot.', ['Commitment'], 'teal'],
+        ['Reassess', 'After 90 days, review honestly: energized or forcing it? Adjust track only if the signal is clear and repeated, not from a single hard day.', ['Reflection'], 'gold'],
+      ],
+      resources: ['freeCodeCamp (coding taster)','Kaggle Learn (data taster)','Figma free tutorials (design taster)','r/cscareerquestions and similar communities for honest perspectives'],
+    }
+  };
+
+  const t = tracks[a.interest] || tracks.unsure;
+
+  const levelNote = {
+    beginner: 'Since you are starting from zero, do not rush — give Stage 1 real time before moving on.',
+    basic: 'You already know some basics, so you can move through Stage 1 quickly and spend more time on projects.',
+    intermediate: 'With projects already under your belt, focus your energy on Stages 3–5: polish, depth, and interviews.',
+    working: 'Since you are already studying or working in this space, prioritize Stages 4–5 — portfolio and getting hired.'
+  }[a.level] || '';
+
+  const styleNote = {
+    fast: 'You want the fastest path — so lean harder on projects and applications, and treat theory as "just enough to be dangerous."',
+    deep: 'You want strong fundamentals — spend extra time in the earlier stages before rushing to projects.',
+    balanced: 'A balanced mix works well here — follow the stages roughly as laid out below.',
+    explore: 'Since you are still deciding, treat the first stage as low-pressure exploration rather than a hard commitment.'
+  }[a.style] || '';
+
+  const watchouts = [
+    'Avoid tutorial hell — code/design/build along, do not just watch.',
+    'Consistency beats intensity: 1 focused hour daily beats 6 hours once a week.',
+    'Don\'t wait to "feel ready" before building — the first project is supposed to be rough.'
+  ];
+  if(a.notes){
+    watchouts.unshift(`On what's on your mind — "${a.notes}" — remember this is common. Most people in tech felt behind or unsure at some point; the roadmap below still applies to you.`);
+  }
+
+  return {
+    headline: t.headline,
+    summary: t.summary + (levelNote ? ' ' + levelNote : '') + (styleNote ? ' ' + styleNote : ''),
+    milestones: t.stages.map(([stage, desc, tags]) => ({ stage, title: stage, description: desc, tags })),
+    resources: t.resources,
+    watchouts: watchouts,
+  };
+}
+
+function renderRoadmap(){
+  const r = state.roadmap;
+  const milestonesHtml = r.milestones.map((m,i)=>`
+    <div class="milestone ${i%2?'alt':''}">
+      <div class="milestone-card">
+        <div class="milestone-stage">Stage ${i+1}</div>
+        <h4 class="milestone-title">${escapeHtml(m.title)}</h4>
+        <p class="milestone-desc">${escapeHtml(m.description)}</p>
+        <div class="chip-row">${m.tags.map(t=>`<span class="chip">${escapeHtml(t)}</span>`).join('')}</div>
+      </div>
+    </div>
+  `).join('');
+
+  app.innerHTML = `
+    <div class="card">
+      <div class="roadmap-header">
+        <h2>${escapeHtml(r.headline)}</h2>
+        <p>${escapeHtml(r.summary)}</p>
+      </div>
+      <div class="path">${milestonesHtml}</div>
+
+      <div class="section-block">
+        <h3>Start here</h3>
+        <ul>${r.resources.map(x=>`<li>${escapeHtml(x)}</li>`).join('')}</ul>
+      </div>
+
+      <div class="section-block">
+        <h3>Watch out for</h3>
+        <ul>${r.watchouts.map(x=>`<li>${escapeHtml(x)}</li>`).join('')}</ul>
+      </div>
+
+      <div class="row-actions" style="margin-top:24px;">
+        <button class="btn btn-ghost" id="restartBtn">Start over</button>
+        <button class="btn btn-primary" id="printBtn">Print / Save as PDF</button>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('restartBtn').onclick = () => {
+    state = { step:0, answers:{interest:'',level:'',stream:'',style:'',notes:''}, roadmap:null };
+    render();
+  };
+  document.getElementById('printBtn').onclick = () => window.print();
+}
+
+function escapeHtml(str){
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+</script>
+</body>
+</html>
